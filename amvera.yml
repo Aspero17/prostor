@@ -6,6 +6,6 @@ meta:
 build:
   requirementsPath: requirements.txt
 run:
-  scriptName: app.py
+  scriptName: prostor-SMS.py
   persistenceMount: /data
   containerPort: 80
