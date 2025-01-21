@@ -9,7 +9,7 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.bot import DefaultBotProperties
 import asyncio
 import logging
-#
+
 # Logging
 logging.basicConfig(level=logging.INFO)
 
