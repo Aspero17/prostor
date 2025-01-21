@@ -25,6 +25,7 @@ def read_config():
 # Чтение значений из config.txt
 BOT_TOKEN, MANAGER_CHAT_ID = read_config()
 
+
 # States
 class ClientForm(StatesGroup):
     name = State()
