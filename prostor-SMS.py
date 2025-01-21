@@ -13,10 +13,17 @@ import logging
 # Logging
 logging.basicConfig(level=logging.INFO)
 
-# Your bot token
-BOT_TOKEN = "1789660026:AAE80Z-vbN1esEp_E4bMGxhQFj-F1jQfwX0"
-# Chat ID where the client card will be sent (e.g., manager's chat)
-MANAGER_CHAT_ID = "-1002333785294"
+# Функция для чтения значений из config.txt
+def read_config():
+    config = {}
+    with open("config.txt", "r") as file:
+        for line in file:
+            key, value = line.strip().split("=", 1)
+            config[key] = value
+    return config["BOT_TOKEN"], config["MANAGER_CHAT_ID"]
+
+# Чтение значений из config.txt
+BOT_TOKEN, MANAGER_CHAT_ID = read_config()
 
 # States
 class ClientForm(StatesGroup):
