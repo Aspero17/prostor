@@ -13,23 +13,15 @@ import logging
 # Logging
 logging.basicConfig(level=logging.INFO)
 
-# Функция для чтения значений из config.txt
-def read_config():
-    config = {}
-    with open("config.txt", "r") as file:
-        for line in file:
-            key, value = line.strip().split("=", 1)
-            config[key] = value
-    return config["BOT_TOKEN"], config["MANAGER_CHAT_ID"]
-
-# Чтение значений из config.txt
-BOT_TOKEN, MANAGER_CHAT_ID = read_config()
+# Your bot token
+BOT_TOKEN = "1789660026:AAE80Z-vbN1esEp_E4bMGxhQFj-F1jQfwX0"
+# Chat ID where the client card will be sent (e.g., manager's chat)
+MANAGER_CHAT_ID = "-1002333785294"
 
 # States
 class ClientForm(StatesGroup):
     name = State()
     service = State()
-    phone = State()
 
 # Initialize bot and dispatcher
 bot = Bot(
@@ -50,31 +42,23 @@ async def start_handler(message: Message, state: FSMContext):
 @dp.message(ClientForm.name)
 async def name_handler(message: Message, state: FSMContext):
     user_name = message.text.strip()
-    await state.update_data(name=user_name)
+    user_nickname = message.from_user.username or "(не указан)"
+    await state.update_data(name=user_name, nickname=user_nickname)
     await state.set_state(ClientForm.service)
-    await message.answer(f"Рад познакомиться, {user_name}! Какая услуга вас интересует?")
+    await message.answer(f"Рад познакомиться, {user_name}! Какая услуга вас интересует и есть ли у вас клиентская база?")
 
 # Service handler
 @dp.message(ClientForm.service)
 async def service_handler(message: Message, state: FSMContext):
     service_interest = message.text.strip()
-    await state.update_data(service=service_interest)
-    await state.set_state(ClientForm.phone)
-    await message.answer("Спасибо! Пожалуйста, напишите ваш номер телефона, чтобы наш менеджер мог с вами связаться.")
-
-# Phone handler
-@dp.message(ClientForm.phone)
-async def phone_handler(message: Message, state: FSMContext):
-    phone_number = message.text.strip()
     user_data = await state.get_data()
 
-    # Save phone number and form the client card
-    user_data["phone"] = phone_number
+    # Form the client card
     client_card = (
         f"✅ Новая заявка:\n\n"
         f"Имя: {user_data['name']}\n"
-        f"Услуга: {user_data['service']}\n"
-        f"Телефон: {user_data['phone']}"
+        f"Никнейм: @{user_data['nickname']}\n"
+        f"Услуга: {service_interest}"
     )
 
     # Send the client card to the manager
@@ -82,7 +66,7 @@ async def phone_handler(message: Message, state: FSMContext):
 
     # Confirm to the user
     await message.answer(
-        "Спасибо за информацию! Наш менеджер свяжется с вами в ближайшее время. Хорошего дня!"
+        "Отлично! Мы уже передали информацию персональный менеджер спешит вам помочь и активировать бонус. А пока вы можете получить доступы для тестирования зарегистрируйтесь на сайте prostor-sms.ru"
     )
 
     # Clear user state
